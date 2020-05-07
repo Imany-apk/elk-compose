@@ -1,0 +1,32 @@
+version: "3"
+
+services: 
+    my_elastic_search:
+        container_name: my_elastic_search
+        image: elasticsearch:7.6.2
+        ports: 
+            - "9200:9200"
+            - "9300:9300"
+        environment: 
+            - "discovery.type=single-node"
+
+
+    my_kibana:
+        container_name: my_kibana
+        image: kibana:7.6.2
+        links: 
+            - "my_elastic_search:elasticsearch"
+        ports: 
+            - "5601:5601"
+
+
+
+    my_logstash_port:
+        container_name: my_logstash_port
+        build: 
+            context: ./logstash
+            dockerfile: ./port/Dockerfile
+        links: 
+            - "my_elastic_search:elasticsearch"
+        ports: 
+            - "9500:9500"
